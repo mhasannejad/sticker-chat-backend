@@ -8,6 +8,8 @@ const morgan = require("morgan");
 const fileUpload = require('express-fileupload');
 const mongoose = require("mongoose");
 const axios = require("axios");
+const upload = require('multer')
+
 
 require("dotenv").config();
 console.log(process.env.MONGODB_URL)

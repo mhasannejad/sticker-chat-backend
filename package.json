@@ -11,6 +11,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "aws-sdk": "^2.1241.0",
     "axios": "^0.27.2",
     "body-parser": "^1.20.1",
     "bootstrap": "^5.2.1",
@@ -22,6 +23,7 @@
     "lodash": "^4.17.21",
     "mongoose": "^6.6.7",
     "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
     "nodemon": "^2.0.20",
     "socket.io": "^4.5.2",
     "ws": "^8.9.0"
