@@ -9,7 +9,7 @@ const fileUpload = require('express-fileupload');
 const mongoose = require("mongoose");
 const axios = require("axios");
 const upload = require('multer')
-
+const fs = require('fs')
 
 require("dotenv").config();
 console.log(process.env.MONGODB_URL)
@@ -77,20 +77,23 @@ app.use('/stickers', express.static('uploads/stickers'))
 //app.use('/sticker', stickerRouter)
 app.post('/sticker/new', (req, res) => {
     try {
-        if (!req.files) {
+        console.log(req.body)
+        if (!req.body.sticker) {
             res.send({
                 status: false,
                 message: 'No file uploaded'
-            });
+            }).status(500);
         } else {
             //Use the name of the input field (i.e. "avatar") to retrieve the uploaded file
             console.log('hereee')
-            let sticker = req.files.sticker;
-
+            let sticker = req.body.sticker;
+            let sticker_pure = sticker.replace(/^data:image\/png;base64,/, "");
             //Use the mv() method to place the file in the upload directory (i.e. "uploads")
-            let sticker_name = Date.now() + '.' + sticker.mimetype.split('/')[1]
-            sticker.mv('./uploads/stickers/' + sticker_name);
-
+            let sticker_name = Date.now() + '.' + sticker.split(',')[0].split('/')[1].split(';')[0]
+            //sticker.mv('./uploads/stickers/' + sticker_name);
+            fs.writeFile('./uploads/stickers/' + sticker_name, sticker.split(',')[1], 'base64', (err) => {
+                console.log(err)
+            })
             let sticker_obj = new Sticker({
                 description: req.body.description,
                 creator: req.body.creator,

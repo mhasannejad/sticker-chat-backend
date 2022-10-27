@@ -129,6 +129,7 @@ dist
 .pnp.*
 
 # Lo
+uploads
 
 # Dependency directory
 # https://docs.npmjs.com/cli/shrinkwrap#caveats
