@@ -16,7 +16,12 @@ console.log(process.env.MONGODB_URL)
 
 const app = express();
 const server = http.createServer(app);
-const io = socketio(server);
+const io = socketio(server,{
+    cors: {
+        origin: process.env.FRONT_URL,
+        methods: ["GET", "POST"]
+    }
+});
 
 const stickerSchema = new mongoose.Schema({
     description: String,
