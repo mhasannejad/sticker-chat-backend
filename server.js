@@ -10,31 +10,22 @@ const mongoose = require("mongoose");
 const axios = require("axios");
 const upload = require('multer')
 const fs = require('fs')
+const {Sticker, StickerSave} = require("./database/models");
+const UserRouter = require('./routes/auth')
+const {isLoggedIn} = require("./middlewares");
+
 
 require("dotenv").config();
 console.log(process.env.MONGODB_URL)
 
 const app = express();
 const server = http.createServer(app);
-const io = socketio(server,{
+const io = socketio(server, {
     cors: {
         origin: process.env.FRONT_URL,
         methods: ["GET", "POST"]
     }
 });
-
-const stickerSchema = new mongoose.Schema({
-    description: String,
-    creator: String,
-    path: String,
-});
-const roomSchema = new mongoose.Schema({
-    title: String,
-    date: Number,
-    description: String,
-});
-const Sticker = mongoose.model('Sticker', stickerSchema);
-const Room = mongoose.model('Room', roomSchema);
 
 
 /// DB
@@ -60,10 +51,15 @@ io.on("connection", (socket) => {
     console.log('new connection')
     socket.on("disconnect", () => {
         console.log('user left ')
-        socket.emit('message', {
+        io.emit('notification', {
             message: 'user left chat'
         })
     });
+    socket.on('notification', (text) => {
+        // io.emit('notification', {
+        //     message: text
+        // })
+    })
     socket.on('chat_message', (text) => {
         console.log(text)
         io.emit('message', {
@@ -128,6 +124,30 @@ app.get('/sticker/all', (req, res) => {
         res.json(result)
     })
 })
+
+app.post('/sticker/save', isLoggedIn, async (req, res, next) => {
+    Sticker.findOne({id: req.body.sticker_id}, (err, sticker) => {
+
+        console.log(sticker)
+        new StickerSave({
+            sticker: sticker,
+            user: req.user.email
+        }).save().then(
+            r => {
+                res.status(201).json(r)
+            }
+        )
+    })
+
+
+})
+app.get('/sticker/mine', isLoggedIn, (req, res, next) => {
+    Sticker.find({user: req.user.email}, (err, data) => {
+        res.status(200).json(data)
+    })
+})
+
+app.use("/auth", UserRouter)
 server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
 
