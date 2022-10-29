@@ -24,4 +24,12 @@ const stickerSaveSchema = new mongoose.Schema({
 
 });
 
-module.exports = {stickerSchema, roomSchema, userSchema, stickerSaveSchema}
+const messageSchema = new mongoose.Schema({
+    message: {
+        type: String
+    },
+    user: {type: String, index: false},
+
+});
+
+module.exports = {stickerSchema, roomSchema, userSchema, stickerSaveSchema, messageSchema}

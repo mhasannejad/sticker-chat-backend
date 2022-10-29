@@ -49,6 +49,15 @@ app.use(morgan('dev'));
 
 io.on("connection", (socket) => {
     console.log('new connection')
+    socket.join('lobby')
+    socket.on('room_join_req', (text) => {
+        console.log(text.room)
+        socket.join(text.room)
+        socket.on('chat_message' + text.room, (msg) => {
+            console.log(msg)
+            io.to(text.room).emit('message', msg)
+        })
+    })
     socket.on("disconnect", () => {
         console.log('user left ')
         io.emit('notification', {
@@ -63,7 +72,7 @@ io.on("connection", (socket) => {
     socket.on('chat_message', (text) => {
         console.log(text)
         io.emit('message', {
-            name: text.name,
+            name: text.user,
             message: text.message
         })
     })
